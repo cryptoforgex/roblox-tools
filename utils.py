@@ -1,24 +1,29 @@
-from typing import List, Dict, Any
+import json
+import requests
 
+class RobloxAPI:
+    BASE_URL = 'https://api.roblox.com/'
 
-def calculate_average(scores: List[float]) -> float:
-    """Calculate the average of a list of scores."""
-    if not scores:
-        return 0.0
-    return sum(scores) / len(scores)
+    @staticmethod
+    def fetch_user_info(user_id):
+        response = requests.get(f'{RobloxAPI.BASE_URL}users/{user_id}')
+        if response.status_code == 200:
+            return response.json()
+        raise ValueError('User not found')
 
+    @staticmethod
+    def fetch_game_info(game_id):
+        response = requests.get(f'{RobloxAPI.BASE_URL}games/{game_id}')
+        if response.status_code == 200:
+            return response.json()
+        raise ValueError('Game not found')
 
-def filter_high_scores(scores: List[float], threshold: float) -> List[float]:
-    """Filter scores that are above a given threshold."""
-    return [score for score in scores if score > threshold]
+    @staticmethod
+    def save_to_json(data, filename):
+        with open(filename, 'w') as json_file:
+            json.dump(data, json_file, indent=4)
 
-
-def format_scoreboard(scoreboard: Dict[str, float]) -> str:
-    """Format a scoreboard dictionary into a string."""
-    formatted = [f'{name}: {score:.2f}' for name, score in scoreboard.items()]
-    return '\n'.join(formatted)
-
-
-def is_valid_score(score: Any) -> bool:
-    """Check if a score is a valid float."""
-    return isinstance(score, (int, float)) and 0 <= score <= 100
+    @staticmethod
+    def read_from_json(filename):
+        with open(filename, 'r') as json_file:
+            return json.load(json_file)
