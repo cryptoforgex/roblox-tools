@@ -1,32 +1,25 @@
-import json
-import re
+import time
 
-class InputValidationError(Exception):
-    pass
+class DataProcessor:
+    def __init__(self, data):
+        self.data = data
 
-class Processor:
-    def __init__(self):
-        self.valid_inputs = []
+    def process_data(self):
+        start_time = time.time()
+        self._optimize_data()
+        print(f"Processing completed in {time.time() - start_time:.4f} seconds")
 
-    def validate_input(self, user_input):
-        if not isinstance(user_input, str):
-            raise InputValidationError("Input must be a string.")
-        if len(user_input) == 0:
-            raise InputValidationError("Input cannot be empty.")
-        if not re.match(r'^[a-zA-Z0-9_]+$', user_input):
-            raise InputValidationError("Input must be alphanumeric and underscores only.")
-        self.valid_inputs.append(user_input)
+    def _optimize_data(self):
+        self.data = sorted(set(self.data))  # Remove duplicates and sort
+        self.data = self._filter_data(self.data)
 
-    def process_inputs(self, inputs):
-        for user_input in inputs:
-            try:
-                self.validate_input(user_input)
-            except InputValidationError as e:
-                print(f'Invalid input: {e}')
-                continue
-            print(f'Processing: {user_input}')  
+    def _filter_data(self, data):
+        return [item for item in data if self._is_valid(item)]
+
+    def _is_valid(self, item):
+        return isinstance(item, int) and item > 0
 
 if __name__ == '__main__':
-    processor = Processor()
-    inputs = ['valid_input1', 'invalid input!', '12345', '']
-    processor.process_inputs(inputs)
+    data = [5, 3, 8, 3, 2, -1, 7, 5]
+    processor = DataProcessor(data)
+    processor.process_data()
