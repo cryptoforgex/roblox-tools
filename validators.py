@@ -1,26 +1,27 @@
 import re
 
-def validate_username(username):
-    return bool(re.match(r'^[a-zA-Z0-9_]{3,20}$', username))
+class InputValidator:
+    @staticmethod
+    def validate_username(username):
+        if not isinstance(username, str):
+            raise ValueError('Username must be a string')
+        if len(username) < 3 or len(username) > 20:
+            raise ValueError('Username must be between 3 and 20 characters')
+        if not re.match('^[a-zA-Z0-9_]*$', username):
+            raise ValueError('Username can only contain alphanumeric characters and underscores')
+        return True
 
+    @staticmethod
+    def validate_email(email):
+        if not isinstance(email, str):
+            raise ValueError('Email must be a string')
+        pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+        if not re.match(pattern, email):
+            raise ValueError('Invalid email format')
+        return True
 
-def validate_password(password):
-    return (len(password) >= 8 and 
-            re.search(r'[A-Za-z]', password) and 
-            re.search(r'[0-9]', password))
-
-
-def validate_email(email):
-    regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-    return bool(re.match(regex, email))
-
-
-def validate_age(age):
-    return isinstance(age, int) and 0 < age < 150
-
-
-def validate_data(username, password, email, age):
-    return (validate_username(username) and 
-            validate_password(password) and 
-            validate_email(email) and 
-            validate_age(age))
+    @staticmethod
+    def validate_age(age):
+        if not isinstance(age, int) or age < 0:
+            raise ValueError('Age must be a non-negative integer')
+        return True
