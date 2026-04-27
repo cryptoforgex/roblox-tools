@@ -1,28 +1,19 @@
-from typing import Any, Dict, List
+import json
 
+def load_json_file(filepath):
+    with open(filepath, 'r') as file:
+        return json.load(file)
 
-def flatten_dict(nested_dict: Dict[str, Any], parent_key: str = '', sep: str = '.') -> Dict[str, Any]:
-    items = []
-    for key, value in nested_dict.items():
-        new_key = f'{parent_key}{sep}{key}' if parent_key else key
-        if isinstance(value, dict):
-            items.extend(flatten_dict(value, new_key, sep=sep).items())
-        else:
-            items.append((new_key, value))
-    return dict(items)
+def save_json_file(filepath, data):
+    with open(filepath, 'w') as file:
+        json.dump(data, file, indent=4)
 
+def merge_json_data(base_data, new_data):
+    base_data.update(new_data)
+    return base_data
 
-def get_unique_elements(elements: List[Any]) -> List[Any]:
-    return list(set(elements))
+def extract_field(data, field):
+    return data.get(field, None)
 
-
-def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
-    merged = dict1.copy()
-    merged.update(dict2)
-    return merged
-
-
-def parse_query_string(query: str) -> Dict[str, List[str]]:
-    if not query:
-        return {}
-    return {k: v.split(',') for k, v in (param.split('=') for param in query.split('&'))}
+def filter_data(data, condition):
+    return {key: value for key, value in data.items() if condition(key, value)}
