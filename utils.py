@@ -1,29 +1,28 @@
-import json
-import requests
+import time
 
-class RobloxAPI:
-    BASE_URL = 'https://api.roblox.com/'
+class Timer:
+    def __enter__(self):
+        self.start = time.time()
+        return self
+    
+    def __exit__(self, *args):
+        self.end = time.time()
+        self.interval = self.end - self.start
+        print(f"Execution time: {self.interval:.4f} seconds")
 
-    @staticmethod
-    def fetch_user_info(user_id):
-        response = requests.get(f'{RobloxAPI.BASE_URL}users/{user_id}')
-        if response.status_code == 200:
-            return response.json()
-        raise ValueError('User not found')
+def optimized_function(data):
+    result = []
+    for item in data:
+        if item not in result:
+            result.append(item)
+    return result
 
-    @staticmethod
-    def fetch_game_info(game_id):
-        response = requests.get(f'{RobloxAPI.BASE_URL}games/{game_id}')
-        if response.status_code == 200:
-            return response.json()
-        raise ValueError('Game not found')
+def bulk_process(data):
+    unique_data = set(data)
+    results = [optimized_function([item]) for item in unique_data]
+    return results
 
-    @staticmethod
-    def save_to_json(data, filename):
-        with open(filename, 'w') as json_file:
-            json.dump(data, json_file, indent=4)
-
-    @staticmethod
-    def read_from_json(filename):
-        with open(filename, 'r') as json_file:
-            return json.load(json_file)
+if __name__ == '__main__':
+    data = [1, 2, 2, 3, 4, 4, 5]
+    with Timer():
+        print(bulk_process(data))
