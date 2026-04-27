@@ -1,16 +1,35 @@
 import logging
-from logging.handlers import RotatingFileHandler
 
-def setup_logger(log_file, max_bytes=2048, backup_count=5):
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
 
-    handler = RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+class Logger:
+    """A simple logger for Roblox tools."""
 
-    return logger
+    def __init__(self, name: str) -> None:
+        """Initializes the Logger with a name."""
+        self.logger = logging.getLogger(name)
+        self.logger.setLevel(logging.DEBUG)
+        handler = logging.StreamHandler()
+        handler.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
 
-logger = setup_logger('app.log')
-logger.info('Logger setup complete.')
+    def debug(self, message: str) -> None:
+        """Logs a message with DEBUG level."""
+        self.logger.debug(message)
+
+    def info(self, message: str) -> None:
+        """Logs a message with INFO level."""
+        self.logger.info(message)
+
+    def warning(self, message: str) -> None:
+        """Logs a message with WARNING level."""
+        self.logger.warning(message)
+
+    def error(self, message: str) -> None:
+        """Logs a message with ERROR level."""
+        self.logger.error(message)
+
+    def critical(self, message: str) -> None:
+        """Logs a message with CRITICAL level."""
+        self.logger.critical(message)
