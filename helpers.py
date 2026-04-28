@@ -1,19 +1,27 @@
 import json
 
-def load_json_file(filepath):
-    with open(filepath, 'r') as file:
+def load_data(file_path):
+    with open(file_path, 'r') as file:
         return json.load(file)
 
-def save_json_file(filepath, data):
-    with open(filepath, 'w') as file:
+
+def save_data(file_path, data):
+    with open(file_path, 'w') as file:
         json.dump(data, file, indent=4)
 
-def merge_json_data(base_data, new_data):
-    base_data.update(new_data)
-    return base_data
 
-def extract_field(data, field):
-    return data.get(field, None)
+def get_player_data(players, player_id):
+    return players.get(player_id, None)
 
-def filter_data(data, condition):
-    return {key: value for key, value in data.items() if condition(key, value)}
+
+def update_player_data(players, player_id, player_info):
+    players[player_id] = player_info
+
+
+def remove_player_data(players, player_id):
+    if player_id in players:
+        del players[player_id]
+
+
+def filter_active_players(players):
+    return {pid: info for pid, info in players.items() if info.get('active', False)}
