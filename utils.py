@@ -1,28 +1,36 @@
-import time
+import json
+import requests
 
-class Timer:
-    def __enter__(self):
-        self.start = time.time()
-        return self
-    
-    def __exit__(self, *args):
-        self.end = time.time()
-        self.interval = self.end - self.start
-        print(f"Execution time: {self.interval:.4f} seconds")
+class RobloxData:
+    BASE_URL = 'https://api.roblox.com/'
 
-def optimized_function(data):
-    result = []
-    for item in data:
-        if item not in result:
-            result.append(item)
-    return result
+    @staticmethod
+    def get_game_info(game_id):
+        response = requests.get(f'{RobloxData.BASE_URL}games/{game_id}')
+        if response.status_code == 200:
+            return response.json()
+        return None
 
-def bulk_process(data):
-    unique_data = set(data)
-    results = [optimized_function([item]) for item in unique_data]
-    return results
+    @staticmethod
+    def search_users(username):
+        response = requests.get(f'{RobloxData.BASE_URL}users/get-by-username-json?username={username}')
+        if response.status_code == 200:
+            return response.json()
+        return None
 
-if __name__ == '__main__':
-    data = [1, 2, 2, 3, 4, 4, 5]
-    with Timer():
-        print(bulk_process(data))
+    @staticmethod
+    def get_all_assets(user_id, limit=10):
+        response = requests.get(f'{RobloxData.BASE_URL}assets?userId={user_id}&limit={limit}')
+        if response.status_code == 200:
+            return response.json()
+        return []
+
+    @staticmethod
+    def json_dump(data, file_path):
+        with open(file_path, 'w') as json_file:
+            json.dump(data, json_file, indent=4)
+
+    @staticmethod
+    def json_load(file_path):
+        with open(file_path, 'r') as json_file:
+            return json.load(json_file)
