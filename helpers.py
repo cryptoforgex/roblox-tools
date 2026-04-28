@@ -1,27 +1,24 @@
-import json
+import time
+import requests
+from functools import wraps
 
-def load_data(file_path):
-    with open(file_path, 'r') as file:
-        return json.load(file)
+def retry(max_retries=3, delay=1):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(max_retries):
+                try:
+                    return func(*args, **kwargs)
+                except requests.RequestException as e:
+                    if attempt < max_retries - 1:
+                        time.sleep(delay)
+                    else:
+                        raise e
+        return wrapper
+    return decorator
 
-
-def save_data(file_path, data):
-    with open(file_path, 'w') as file:
-        json.dump(data, file, indent=4)
-
-
-def get_player_data(players, player_id):
-    return players.get(player_id, None)
-
-
-def update_player_data(players, player_id, player_info):
-    players[player_id] = player_info
-
-
-def remove_player_data(players, player_id):
-    if player_id in players:
-        del players[player_id]
-
-
-def filter_active_players(players):
-    return {pid: info for pid, info in players.items() if info.get('active', False)}
+@retry(max_retries=5, delay=2)
+def fetch_data(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()
