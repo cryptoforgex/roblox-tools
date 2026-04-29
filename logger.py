@@ -1,35 +1,36 @@
 import logging
 
+logger = logging.getLogger('roblox_tools')
+logger.setLevel(logging.INFO)
 
-class Logger:
-    """A simple logger for Roblox tools."""
+# Create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
 
-    def __init__(self, name: str) -> None:
-        """Initializes the Logger with a name."""
-        self.logger = logging.getLogger(name)
-        self.logger.setLevel(logging.DEBUG)
-        handler = logging.StreamHandler()
-        handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        handler.setFormatter(formatter)
-        self.logger.addHandler(handler)
+# Create formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    def debug(self, message: str) -> None:
-        """Logs a message with DEBUG level."""
-        self.logger.debug(message)
+# Add formatter to ch
+ch.setFormatter(formatter)
 
-    def info(self, message: str) -> None:
-        """Logs a message with INFO level."""
-        self.logger.info(message)
+# Add console handler to logger
+logger.addHandler(ch)
 
-    def warning(self, message: str) -> None:
-        """Logs a message with WARNING level."""
-        self.logger.warning(message)
+def log_info(message: str) -> None:
+    """Logs an informational message."""
+    logger.info(message)
 
-    def error(self, message: str) -> None:
-        """Logs a message with ERROR level."""
-        self.logger.error(message)
 
-    def critical(self, message: str) -> None:
-        """Logs a message with CRITICAL level."""
-        self.logger.critical(message)
+def log_error(message: str) -> None:
+    """Logs an error message."""
+    logger.error(message)
+
+
+def log_warning(message: str) -> None:
+    """Logs a warning message."""
+    logger.warning(message)
+
+
+def log_debug(message: str) -> None:
+    """Logs a debug message."""
+    logger.debug(message)
