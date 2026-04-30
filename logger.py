@@ -1,36 +1,17 @@
 import logging
+import os
+from logging.handlers import RotatingFileHandler
 
-logger = logging.getLogger('roblox_tools')
-logger.setLevel(logging.INFO)
+def setup_logger(log_file='app.log', max_bytes=10485760, backup_count=5):
+    logger = logging.getLogger('rotating_logger')
+    logger.setLevel(logging.DEBUG)
 
-# Create console handler and set level to debug
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
+    if not logger.handlers:
+        if not os.path.exists(os.path.dirname(log_file)):
+            os.makedirs(os.path.dirname(log_file))
+        handler = RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
 
-# Create formatter
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-# Add formatter to ch
-ch.setFormatter(formatter)
-
-# Add console handler to logger
-logger.addHandler(ch)
-
-def log_info(message: str) -> None:
-    """Logs an informational message."""
-    logger.info(message)
-
-
-def log_error(message: str) -> None:
-    """Logs an error message."""
-    logger.error(message)
-
-
-def log_warning(message: str) -> None:
-    """Logs a warning message."""
-    logger.warning(message)
-
-
-def log_debug(message: str) -> None:
-    """Logs a debug message."""
-    logger.debug(message)
+    return logger
