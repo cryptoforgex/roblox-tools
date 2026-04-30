@@ -1,25 +1,39 @@
-import time
+from typing import List, Dict
 
 class DataProcessor:
-    def __init__(self, data):
+    def __init__(self, data: List[Dict]) -> None:
         self.data = data
 
-    def process_data(self):
-        start_time = time.time()
-        self._optimize_data()
-        print(f"Processing completed in {time.time() - start_time:.4f} seconds")
+    def filter_data(self, threshold: int) -> List[Dict]:
+        """
+        Filters the data based on a threshold.
 
-    def _optimize_data(self):
-        self.data = sorted(set(self.data))  # Remove duplicates and sort
-        self.data = self._filter_data(self.data)
+        Args:
+            threshold (int): The threshold for filtering data.
 
-    def _filter_data(self, data):
-        return [item for item in data if self._is_valid(item)]
+        Returns:
+            List[Dict]: A list of filtered data.
+        """
+        return [item for item in self.data if item.get('value', 0) > threshold]
 
-    def _is_valid(self, item):
-        return isinstance(item, int) and item > 0
+    def aggregate_data(self) -> Dict[str, int]:
+        """
+        Aggregates the data to count occurrences of each type.
 
-if __name__ == '__main__':
-    data = [5, 3, 8, 3, 2, -1, 7, 5]
-    processor = DataProcessor(data)
-    processor.process_data()
+        Returns:
+            Dict[str, int]: A dictionary with counts of each type.
+        """
+        aggregation = {} 
+        for item in self.data:
+            item_type = item.get('type', 'unknown')
+            aggregation[item_type] = aggregation.get(item_type, 0) + 1
+        return aggregation
+
+    def sort_data(self) -> List[Dict]:
+        """
+        Sorts the data by the 'value' key in descending order.
+
+        Returns:
+            List[Dict]: A sorted list of data.
+        """
+        return sorted(self.data, key=lambda x: x.get('value', 0), reverse=True)
